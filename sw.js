@@ -1,40 +1,14 @@
-// Study Manager — Service Worker
-// Strategy:
-//  - App shell (index.html, manifest, icons): network-first, falling back to
-//    cache when offline. You're actively iterating on index.html, so this
-//    always serves the latest version when online, and the last-known-good
-//    version when offline.
-//  - CDN dependencies (Font Awesome, Google Fonts, pdf.js): cache-first.
-//    These are versioned/pinned URLs that never change content, so once
-//    cached they're served instantly and never re-fetched. This also
-//    transparently catches the *sub-resources* those stylesheets reference
-//    (the actual .woff2 font files, pdf.worker.min.js, etc.) the first time
-//    each is requested — no need to know their exact dynamic URLs in advance.
-//
-// Bump CACHE_VERSION whenever index.html (or anything in APP_SHELL) changes,
-// so returning visitors pick up the update instead of a stale cached copy.
-const CACHE_VERSION = 'v1';
-const SHELL_CACHE = `study-manager-shell-${CACHE_VERSION}`;
-const CDN_CACHE = `study-manager-cdn-${CACHE_VERSION}`;
-
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-192-maskable.png',
-  './icons/icon-512-maskable.png',
-  './icons/apple-touch-icon.png',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-192-maskable.png',
+  './icon-512-maskable.png',
+  './apple-touch-icon.png',
   './favicon.ico',
-];
-
-// Known CDN entry points — precached up front so the very first offline
-// visit (even before the user has opened every screen) already has icons,
-// fonts, and the PDF library ready to go.
-const CDN_SHELL = [
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+];  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap',
 ];
