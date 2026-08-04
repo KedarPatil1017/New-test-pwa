@@ -4904,13 +4904,9 @@ function _setupReorderItemDrag(item) {
     handle.addEventListener('touchcancel', endDrag, { passive: true });
 }
 
-if ('serviceWorker' in navigator) {
-    try {
-        var swPath = new URL('service-worker.js', location.href).href;
-        var swScope = new URL('./', location.href).href;
-        navigator.serviceWorker.register(swPath, { scope: swScope }).catch(function(){});
-    } catch(e) {}
-}
+// (Removed a stale, unused service-worker.js registration that was left over
+// from an earlier version of this file — the app's real service worker is
+// registered once, near the end of the file, pointing at the actual sw.js.)
 
 // ── MATERIALS SELECT MODE ─────────────────────────────────────────────────────
 var _matSelectMode = false;
@@ -5046,6 +5042,21 @@ function matSelectDelete() {
 // or content:// origins, so this silently no-ops there instead of erroring,
 // and the app continues to work exactly as it already does in that context.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    // Auto-reload once, the very first time a service worker takes control of
+    // this page. A freshly-installing SW does NOT control the page that
+    // registered it (only the next navigation/reload) — so testing offline
+    // mode immediately after the very first install would bypass the SW
+    // entirely and hit the network for real, which is what can make icons
+    // and fonts fall back to the Unicode set even though they're already
+    // cached. A single guarded reload fixes that for the current session.
+    let _swReloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (_swReloading || sessionStorage.getItem('_swReloaded')) return;
+        _swReloading = true;
+        sessionStorage.setItem('_swReloaded', '1');
+        location.reload();
+    });
+
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then(reg => {
             // If a new version of the app is already waiting, let a future
