@@ -13,7 +13,7 @@
 //
 // Bump CACHE_VERSION whenever index.html (or anything in APP_SHELL) changes,
 // so returning visitors pick up the update instead of a stale cached copy.
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const SHELL_CACHE = `study-manager-shell-${CACHE_VERSION}`;
 const CDN_CACHE = `study-manager-cdn-${CACHE_VERSION}`;
 
@@ -21,12 +21,12 @@ const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-192-maskable.png',
-  './icon-512-maskable.png',
-  './apple-touch-icon.png',
-  './favicon.ico',
+  './icon-192-v2.png',
+  './icon-512-v2.png',
+  './icon-192-maskable-v2.png',
+  './icon-512-maskable-v2.png',
+  './apple-touch-icon-v2.png',
+  './favicon-v2.ico',
 ];
 
 // Known CDN entry points — precached up front so the very first offline
